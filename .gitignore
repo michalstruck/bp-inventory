@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+#google api key
+src/client_secret.json
+
 # production
 /build
 
