@@ -1,8 +1,9 @@
 import Login from "./components/Login";
 import Logout from "./components/Logout";
-import { SyntheticEvent, useEffect } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { gapi } from "gapi-script";
 import credentials from "./client_secret.json";
+import Main from "./Main";
 
 const apiKey = credentials.api_key;
 const discoveryDocs = [
@@ -10,10 +11,13 @@ const discoveryDocs = [
 ];
 const clientId = credentials.client_id;
 const scopes = "https://www.googleapis.com/auth/spreadsheets";
-const authorizeButton = document.getElementById("authorize-button");
-const signoutButton = document.getElementById("signout-button");
 
 function App() {
+  const authorizeButton = document.getElementById("authorize-button");
+  const signoutButton = document.getElementById("signout-button");
+  const [valueKeys, setValueKeys] = useState([]);
+  useEffect(() => handleClientLoad(), []);
+
   // Load the API client and auth2 library
   const handleClientLoad = () => {
     gapi.load("client:auth2", initClient);
@@ -55,27 +59,24 @@ function App() {
 
   const makeApiCall = () => {
     const params = {
-      // The spreadsheet to request.
       spreadsheetId: "1BiFcix7htCYmrV6v1DknnsA4ddTp56Nm76_m2PFap8Q",
-      // The ranges to retrieve from the spreadsheet.
-      ranges: [],
-      // True if grid data should be returned.
-      // This parameter is ignored if a field mask was set in the request.
-      includeGridData: true,
+      // The ranges to retrieve from the spreadsheet
+      range: "SŁONY",
+      // includeGridData: true,
     };
     //@ts-ignore
-    const request = gapi.client.sheets.spreadsheets.get(params);
+    const request = gapi.client.sheets.spreadsheets.values.get(params);
     request.then(
-      (res: { result: any }) => {
+      ({ result }: any) => {
         // TODO: Change code below to process the `response` object:
-        console.log(res.result);
+        setValueKeys(result.values);
+        console.log(result);
       },
-      (res: { result: { error: { message: string } } }) => {
-        console.error("error: " + res.result.error.message);
+      ({ result }: any) => {
+        console.error("error: " + result.error.message);
       }
     );
   };
-  useEffect(() => handleClientLoad(), []);
   return (
     <div className="App">
       <button onClick={handleAuthClick} id="authorize-button">
@@ -85,7 +86,7 @@ function App() {
         signout
       </button>
       <button onClick={makeApiCall}>fetch</button>
-
+      <Main valueKeys={valueKeys} />
       <Login />
       <Logout />
     </div>
