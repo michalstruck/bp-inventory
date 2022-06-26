@@ -1,15 +1,14 @@
-const defVal = [[]];
+import { ValueKeys } from "./App";
 
-const Main = ({ valueKeys }: { valueKeys: any }) => {
-  const getData = () =>
-    valueKeys.map((el: string[], i: number) => (
-      <tr key={i + 240}>
-        <td>{el[0]}</td>
-        <td>{el[1]}</td>
-        <td>{el[el.length !== 1 ? el.length - 1 : "69696969"]}</td>
-      </tr>
-    ));
-
+const Main = ({ valueKeys }: { valueKeys: ValueKeys }) => {
+  const getData = () => (
+    <tr>
+      <td>{valueKeys.name}</td>
+      <td>{valueKeys.measure}</td>
+      <td>{valueKeys.lastEntry}</td>
+    </tr>
+  );
+  console.log(valueKeys.name);
   return (
     <div>
       <table>
