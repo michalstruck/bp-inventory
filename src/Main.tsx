@@ -1,14 +1,15 @@
-import { ValueKeys } from "./App";
-
-const Main = ({ valueKeys }: { valueKeys: ValueKeys }) => {
+const Main = ({ valueKeys }: { valueKeys: string[] }) => {
   const getData = () => (
     <tr>
-      <td>{valueKeys.name}</td>
-      <td>{valueKeys.measure}</td>
-      <td>{valueKeys.lastEntry}</td>
+      {/* {valueKeys.map((el, i) => (
+        <>
+          <td key={i}>{el.name}</td>
+          <td key={i + 1}>{el.measure}</td>
+          <td key={i + 2}>{el.lastEntry}</td>
+        </>
+      ))} */}
     </tr>
   );
-  console.log(valueKeys.name);
   return (
     <div>
       <table>

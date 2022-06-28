@@ -12,16 +12,10 @@ const discoveryDocs = [
 const clientId = credentials.client_id;
 const scopes = "https://www.googleapis.com/auth/spreadsheets";
 
-export type ValueKeys = { name: string; measure: string; lastEntry: string };
-
 function App() {
   const authorizeButton = document.getElementById("authorize-button");
   const signoutButton = document.getElementById("signout-button");
-  const [valueKeys, setValueKeys] = useState<ValueKeys>({
-    name: "",
-    measure: "",
-    lastEntry: "",
-  } as ValueKeys);
+  const [valueKeys, setValueKeys] = useState<string[]>([""]);
 
   useEffect(() => handleClientLoad(), []);
 
@@ -72,21 +66,29 @@ function App() {
     const request = gapi.client.sheets.spreadsheets.values.get(params);
     request.then(
       ({ result }: any) => {
-        // .map((el: string[], i: number) => (
-        //   <tr key={i + 240}>
-        //     <td>{el[0]}</td>
-        //     <td>{el[1]}</td>
-        //     <td>{el[el.length !== 1 ? el.length - 1 : "69696969"]}</td>
-        //   </tr>
-        console.log(result.values);
+        //
+        // console.log(result.values);
+        //
         setValueKeys(
-          result.values.map((el: string[], i: number) => ({
-            name: el[0],
-            measure: el[1 ?? ""],
-            lastEntry: [el.length !== 1 ? el.length - 1 : "69696969"],
-          }))
+          result.values
+            .map(
+              (el: string[], i: number) =>
+                [
+                  el[0],
+                  el[1 ?? ""],
+                  // ternary returns undefined when length is less than 2, otherwise returns
+                  // the last element - the most recent
+                  el[el.length < 2 ? -1 : el.length - 1],
+                ].filter((item) => item !== undefined)
+              //first filter removes all the undefined values from the ternary
+            )
+            //the second filter removes all the empty arrays
+            .filter((item: any) => item.length !== 0)
         );
+        //as a result we finally get clean data to work with
+        //
         console.log(valueKeys);
+        //
       },
       ({ result }: any) => {
         console.error("error: " + result.error.message);
