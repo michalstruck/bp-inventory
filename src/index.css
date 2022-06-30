@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .button-animation {
+    @apply active:elevation-2 transition-all duration-75 active:translate-y-1;
+  }
+}

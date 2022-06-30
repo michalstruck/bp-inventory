@@ -1,15 +1,10 @@
 const Main = ({ valueKeys }: { valueKeys: string[] }) => {
-  const getData = () => (
-    <tr>
-      {/* {valueKeys.map((el, i) => (
-        <>
-          <td key={i}>{el.name}</td>
-          <td key={i + 1}>{el.measure}</td>
-          <td key={i + 2}>{el.lastEntry}</td>
-        </>
-      ))} */}
-    </tr>
-  );
+  const getData = () =>
+    valueKeys.map((el, i) => (
+      <tr key={i + 240}>
+        <td key={i}>{el} </td>
+      </tr>
+    ));
   return (
     <div>
       <table>
