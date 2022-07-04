@@ -1,7 +1,7 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { gapi } from "gapi-script";
 import credentials from "./client_secret.json";
-import Main from "./Main";
+import Main from "./components/Main";
 import Card from "./components/Card";
 
 const apiKey = credentials.api_key;
@@ -42,7 +42,7 @@ function App() {
     if (isSignedIn) {
       authorizeButton!.style.display = "none";
       signoutButton!.style.display = "block";
-      makeApiCall();
+      fetchData();
     } else {
       authorizeButton!.style.display = "block";
       signoutButton!.style.display = "none";
@@ -57,38 +57,29 @@ function App() {
     gapi.auth2.getAuthInstance().signOut();
   };
 
-  const makeApiCall = () => {
+  const fetchData = () => {
     const params = {
       spreadsheetId: "1aQ5r9B5-NVY2ETiUx1tV2ket7ljyv6T0J4BwV5Ttdps",
-      range: "SŁONY",
+      range: "SŁONY!A:C",
+      majorDimension: "COLUMNS",
     };
     const request = gapi.client.sheets.spreadsheets.values.get(params);
     request.then(
       ({ result }: any) => {
-        setValueKeys(
-          result.values
-            .map(
-              (el: string[], i: number) =>
-                [
-                  el[0],
-                  el[1 ?? -1],
-                  // ternary returns undefined when length is less than 2, otherwise returns
-                  // the last element - the most recent
-                  el[el.length < 2 ? -1 : el.length - 1],
-                ].filter((item) => item !== undefined)
-              //first filter removes all the undefined values from the ternary
-            )
-            //the second filter removes all the empty arrays
-            .filter((item: any) => item.length !== 0)
-        );
-        //as a result we finally get clean data to work with
+        console.log(result);
+        setValueKeys(result.values);
       },
-      ({ result }: any) => {
-        console.error("error: " + result.error.message);
+      ({
+        result: {
+          error: { message },
+        },
+      }: any) => {
+        console.error("error: " + message);
       }
     );
   };
   const addNewValues = () => {
+    fetchData();
     const values = [["1", "2", "3", "4", "5", "6", "7"]];
     const body = {
       values: values,
@@ -96,7 +87,10 @@ function App() {
     };
     const params = {
       spreadsheetId: "1aQ5r9B5-NVY2ETiUx1tV2ket7ljyv6T0J4BwV5Ttdps",
-      range: "SŁONY!C:C",
+      //for it to append values to a partially full column
+      //you need to `SŁONY!C${valueKeys[2].length}` and make it fetch
+      range: `SŁONY!C${valueKeys[2].length + 1}`,
+      // range: "SŁONY!C8",
     };
     console.log(params.range);
     gapi.client.sheets.spreadsheets.values
@@ -165,7 +159,7 @@ function App() {
           signout
         </button>
         <button
-          onClick={makeApiCall}
+          onClick={fetchData}
           className="w-24 h-12 button-animation bg-zinc-400 rounded-lg elevation-5"
         >
           fetch
