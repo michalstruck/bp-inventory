@@ -15,7 +15,8 @@ const scopes = "https://www.googleapis.com/auth/spreadsheets";
 function App() {
   const authorizeButton = document.getElementById("authorize-button");
   const signoutButton = document.getElementById("signout-button");
-  const { addEmptyColumn, fetchData, addNewValues, valueKeys } = useSheet();
+  const { addEmptyColumn, fetchCellValues, addNewValues, valueKeys } =
+    useSheet();
 
   useEffect(() => handleClientLoad(), []);
 
@@ -43,7 +44,7 @@ function App() {
     if (isSignedIn) {
       authorizeButton!.style.display = "none";
       signoutButton!.style.display = "block";
-      fetchData();
+      fetchCellValues();
     } else {
       authorizeButton!.style.display = "block";
       signoutButton!.style.display = "none";
@@ -76,7 +77,7 @@ function App() {
           signout
         </button>
         <button
-          onClick={fetchData}
+          onClick={fetchCellValues}
           className="w-24 h-12 button-animation bg-zinc-400 rounded-lg elevation-5"
         >
           fetch

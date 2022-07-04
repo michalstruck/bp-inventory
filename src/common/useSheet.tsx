@@ -3,7 +3,7 @@ import { useState } from "react";
 const useSheet = () => {
   const [valueKeys, setValueKeys] = useState<string[]>([""]);
 
-  const fetchData = () => {
+  const fetchCellValues = () => {
     const params = {
       spreadsheetId: "1aQ5r9B5-NVY2ETiUx1tV2ket7ljyv6T0J4BwV5Ttdps",
       range: "SŁONY!A:C",
@@ -25,7 +25,7 @@ const useSheet = () => {
     );
   };
   const addNewValues = () => {
-    fetchData();
+    fetchCellValues();
     const values = [["1", "2", "3", "4", "5", "6", "7"]];
     const body = {
       values: values,
@@ -33,10 +33,8 @@ const useSheet = () => {
     };
     const params = {
       spreadsheetId: "1aQ5r9B5-NVY2ETiUx1tV2ket7ljyv6T0J4BwV5Ttdps",
-      //for it to append values to a partially full column
-      //you need to `SŁONY!C${valueKeys[2].length}` and make it fetch
-      range: `SŁONY!C${valueKeys[2].length + 1}`,
-      // range: "SŁONY!C8",
+      //appends new values to the column
+      range: `SŁONY!C${(valueKeys[2]?.length ?? 0) + 1}`,
     };
     console.log(params.range);
     gapi.client.sheets.spreadsheets.values
@@ -48,8 +46,9 @@ const useSheet = () => {
         resource: body,
       })
       .then((response) => {
-        var result = response.result;
+        const result = response.result;
         console.log(`${result.updates?.updatedCells} cells appended.`);
+        fetchCellValues();
       });
   };
 
@@ -87,7 +86,7 @@ const useSheet = () => {
       }
     );
   };
-  return { addEmptyColumn, fetchData, addNewValues, valueKeys };
+  return { addEmptyColumn, fetchCellValues, addNewValues, valueKeys };
 };
 
 export default useSheet;

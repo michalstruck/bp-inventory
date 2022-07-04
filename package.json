@@ -13,6 +13,7 @@
     "gapi-script": "^1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-query": "^3.39.1",
     "react-scripts": "5.0.1",
     "tailwindcss-elevation": "^1.0.1",
     "typescript": "^4.7.4"
